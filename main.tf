@@ -12,7 +12,7 @@ resource "aws_subnet" "mtc_public_subnet" {
   vpc_id                  = aws_vpc.mtc_vpc.id
   cidr_block              = "10.123.1.0/24"
   map_public_ip_on_launch = true
-  availability_zone       = "us-west-2a"
+  availability_zone       = "us--1a"
 
   tags = {
     Name = "dev-public"
@@ -67,7 +67,7 @@ resource "aws_security_group" "mtc_sg" {
 
 resource "aws_key_pair" "mtc_auth" {
   key_name   = "mtckey2"
-  public_key = file("~/.ssh/mtckey.pub")
+  public_key = file("mtckey.pub")
 }
 
 resource "aws_instance" "dev_node" {
@@ -86,11 +86,11 @@ resource "aws_instance" "dev_node" {
         Name = "dev-node"
     }
 
-  provisioner "local-exec" {
-    command = templatefile("${var.host_os}-ssh-config.tpl", {
-      hostname = self.public_ip,
-      user     = "ubuntu",
-    identityfile = "~/.ssh/mtckey" })
-    interpreter = var.host_os == "windows" ? ["Powershell", "-Command"] : ["bash", "-c"]
-  }
+  # provisioner "local-exec" {
+  #   command = templatefile("${var.host_os}-ssh-config.tpl", {
+  #     hostname = self.public_ip,
+  #     user     = "ubuntu",
+  #   identityfile = "~/.ssh/mtckey" })
+  #   interpreter = var.host_os == "windows" ? ["Powershell", "-Command"] : ["bash", "-c"]
+  # }
 }
